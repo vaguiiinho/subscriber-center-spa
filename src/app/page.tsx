@@ -1,5 +1,8 @@
-'use client'
-export default async function getTicket() {
+"use client"
+
+import { useEffect, useState } from "react";
+
+export default function Page() {
   const options = {
     method: 'POST',
     headers: {
@@ -15,34 +18,43 @@ export default async function getTicket() {
     }),
   };
 
-  try {
-    // Verifique se está no ambiente do navegador
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+  const [ticket, setTicket] = useState<Blob | null>(null);
 
-    const response = await fetch(`${baseUrl}/api/proxy`, options);
-
-    if (!response.ok) {
-      console.error(`Erro: ${response.status} - ${response.statusText}`);
-      return;
+  useEffect(() => {
+    const getTicket = async () => {
+      try {
+        const response = await fetch('/api/proxy', options);
+        if (!response.ok) throw new Error('Erro ao obter o boleto');
+        const blob = await response.blob();
+        setTicket(blob);
+      } catch (error) {
+        console.error(error);
+      }
     }
+    getTicket();
+  }, []);
 
-    const blob = await response.blob();
-    console.log("Blob recebido:", blob);
-
-    if (blob.size === 0) {
-      console.error("O blob está vazio");
-      return;
+  const downloadBlob = () => {
+    if (ticket) {
+      const url = URL.createObjectURL(ticket);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'boleto.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     }
+  };
 
-    const blobURL = URL.createObjectURL(blob);
-    console.log("Blob URL:", blobURL);
-
-    // Executa no cliente (não no servidor)
-    if (typeof window !== 'undefined') {
-      window.open(blobURL);
-    }
-
-  } catch (error) {
-    console.error("Erro ao obter o ticket:", error);
+  if (!ticket) {
+    return <div>Carregando...</div>;
   }
+
+  return (
+    <div>
+      <div>Ticket recebido!</div>
+      <button onClick={downloadBlob}>Baixar Boleto</button>
+    </div>
+  );
 }
