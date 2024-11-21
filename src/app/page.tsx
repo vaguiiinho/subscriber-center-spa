@@ -23,7 +23,7 @@ export default function Page() {
   useEffect(() => {
     const getTicket = async () => {
       try {
-        const response = await fetch('/api/proxy', options);
+        const response = await fetch('/api/ticket', options);
         if (!response.ok) throw new Error('Erro ao obter o boleto');
         const blob = await response.blob();
         setTicket(blob);
