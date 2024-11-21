@@ -1,9 +1,8 @@
-
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-    const token = 'token'
-    const url = 'url'
+    const url = 'https://crm.tubaron.net/webservice/v1/fn_areceber';
+    const token = '44:82225522c68ce028c0652e38ccbade6ac43df33110853ec131ad1797aa1db656'
 
     const body = await req.json();
 
@@ -12,6 +11,7 @@ export async function POST(req: Request) {
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Basic ${Buffer.from(token).toString('base64')}`,
+            ixcsoft: 'listar',
         },
         body: JSON.stringify(body),
     });
@@ -22,6 +22,6 @@ export async function POST(req: Request) {
 
     const blob = await response.blob();
     return new NextResponse(blob, {
-        headers: { 'Content-Type': 'application/pdf' },
+        headers: { 'Content-Type': 'application/json' },
     });
 }
