@@ -4,7 +4,7 @@ import { getTicket } from '@/app/util/settings'
 
 export default async function ButtonTicketViwe() {
     const test = getTicket()
-    console.log(test)
+    
 
     // const pdfBlob = await test.blob();
 
