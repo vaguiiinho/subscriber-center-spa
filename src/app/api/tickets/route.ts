@@ -20,8 +20,9 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Failed to fetch from external API' }, { status: response.status });
     }
 
-    const blob = await response.blob();
-    return new NextResponse(blob, {
+    const data = await response.json();
+    
+    return new NextResponse(JSON.stringify(data), {
         headers: { 'Content-Type': 'application/json' },
     });
 }
